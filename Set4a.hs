@@ -35,9 +35,7 @@ import Data.Array
 -- you remove the Eq a => constraint from the type!
 
 allEqual :: Eq a => [a] -> Bool
-allEqual xs = if length xs == 0
-                    then True
-                    else all (== head xs) (tail xs)
+allEqual xs = todo
 
 ------------------------------------------------------------------------------
 -- Ex 2: implement the function distinct which returns True if all
@@ -52,9 +50,7 @@ allEqual xs = if length xs == 0
 --   distinct [1,2] ==> True
 
 distinct :: Eq a => [a] -> Bool
-distinct xs 
-    | length (nub xs) == length xs = True
-    | otherwise = False
+distinct = todo
 
 ------------------------------------------------------------------------------
 -- Ex 3: implement the function middle that returns the middle value
@@ -67,8 +63,7 @@ distinct xs
 --   middle 'b' 'a' 'c'  ==> 'b'
 --   middle 1 7 3        ==> 3
 
-middle :: Ord a => a -> a -> a -> a
-middle i j k = (sort [i,j,k])!!1
+middle = todo
 
 ------------------------------------------------------------------------------
 -- Ex 4: return the range of an input list, that is, the difference
@@ -83,33 +78,26 @@ middle i j k = (sort [i,j,k])!!1
 --   rangeOf [4,2,1,3]          ==> 3
 --   rangeOf [1.5,1.0,1.1,1.2]  ==> 0.5
 
-rangeOf :: (Ord a, Num a) => [a] -> a
-rangeOf xs = (maximum xs) - (minimum xs)
+rangeOf :: [a] -> a
+rangeOf = todo
 
 ------------------------------------------------------------------------------
--- Ex 5: given a list of lists, return the longest list. If there
--- are multiple lists of the same length, return the list that has
--- the smallest _first element_.
+-- Ex 5: given a (non-empty) list of (non-empty) lists, return the longest
+-- list. If there are multiple lists of the same length, return the list that
+-- has the smallest _first element_.
 --
 -- (If multiple lists have the same length and same first element,
 -- you can return any one of them.)
 --
--- Give the longest function a suitable type.
+-- Give the function "longest" a suitable type.
+--
+-- Challenge: Can you solve this exercise without sorting the list of lists?
 --
 -- Examples:
 --   longest [[1,2,3],[4,5],[6]] ==> [1,2,3]
 --   longest ["bcd","def","ab"] ==> "bcd"
 
-longest :: Ord a => [[a]] -> [a]
-longest (x:xs) = longest' x xs
-
-longest' :: Ord x => [x] -> [[x]] -> [x]
-longest' i [] = i
-longest' i (j:js)
-    | length i > length j = longest' i js
-    | length i < length j = longest' j js
-    | head i < head j = longest' i js
-    | otherwise = longest' j js
+longest = todo
 
 ------------------------------------------------------------------------------
 -- Ex 6: Implement the function incrementKey, that takes a list of
@@ -125,9 +113,8 @@ longest' i (j:js)
 --   incrementKey True [(True,1),(False,3),(True,4)] ==> [(True,2),(False,3),(True,5)]
 --   incrementKey 'a' [('a',3.4)] ==> [('a',4.4)]
 
-incrementKey :: (Eq k, Num v) => k -> [(k,v)] -> [(k,v)]
-incrementKey k xs = map (\(key, value) -> if key /= k then (key, value)
-                                                        else (key, value+1)) xs
+incrementKey :: k -> [(k,v)] -> [(k,v)]
+incrementKey = todo
 
 ------------------------------------------------------------------------------
 -- Ex 7: compute the average of a list of values of the Fractional
@@ -142,12 +129,13 @@ incrementKey k xs = map (\(key, value) -> if key /= k then (key, value)
 -- length to a Fractional
 
 average :: Fractional a => [a] -> a
-    average xs = todo
+average xs = todo
 
 ------------------------------------------------------------------------------
 -- Ex 8: given a map from player name to score and two players, return
 -- the name of the player with more points. If the players are tied,
--- return the name of the first player.
+-- return the name of the first player (that is, the name of the
+-- player who comes first in the argument list, player1).
 --
 -- If a player doesn't exist in the map, you can assume they have 0 points.
 --
@@ -156,8 +144,8 @@ average :: Fractional a => [a] -> a
 -- Examples:
 --   winner (Map.fromList [("Bob",3470),("Jane",2130),("Lisa",9448)]) "Jane" "Lisa"
 --     ==> "Lisa"
---   winner (Map.fromList [("Bob",5899),("Lisa",5899),("Mike",13607)]) "Bob" "Lisa"
---     ==> "Bob"
+--   winner (Map.fromList [("Mike",13607),("Bob",5899),("Lisa",5899)]) "Lisa" "Bob"
+--     ==> "Lisa"
 
 winner :: Map.Map String Int -> String -> String -> String
 winner scores player1 player2 = todo

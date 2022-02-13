@@ -29,7 +29,7 @@ import Data.List
 
 maxBy :: (a -> Int) -> a -> a -> a
 maxBy measure a b
-  | (measure a - measure b) > 0 = a
+  | measure a >= measure b = a
   | otherwise = b
 
 ------------------------------------------------------------------------------
@@ -42,8 +42,8 @@ maxBy measure a b
 --   mapMaybe length (Just "abc") ==> Just 3
 
 mapMaybe :: (a -> b) -> Maybe a -> Maybe b
-mapMaybe f (Just x) = Just(f x)
 mapMaybe f Nothing = Nothing
+mapMaybe f (Just x) = Just(f x)
 
 ------------------------------------------------------------------------------
 -- Ex 3: implement the function mapMaybe2 that works like mapMaybe
@@ -57,8 +57,9 @@ mapMaybe f Nothing = Nothing
 --   mapMaybe2 div (Just 6) Nothing   ==>  Nothing
 
 mapMaybe2 :: (a -> b -> c) -> Maybe a -> Maybe b -> Maybe c
-mapMaybe2 f (Just x) (Just y) = Just(f x y)
-mapMaybe2 f x y = Nothing
+mapMaybe2 _ Nothing _ = Nothing
+mapMaybe2 _ _ Nothing = Nothing
+mapMaybe2 f (Just x) (Just y) = Just (f x y)
 
 ------------------------------------------------------------------------------
 -- Ex 4: define the functions firstHalf and palindrome so that
@@ -81,7 +82,9 @@ palindromeHalfs :: [String] -> [String]
 palindromeHalfs xs = map firstHalf (filter palindrome xs)
 
 firstHalf :: String -> String
-firstHalf xs = take ((length xs + 1 ) `div` 2) xs
+firstHalf str
+  | odd (length str) = take ((div (length str) 2) + 1) str
+  | otherwise = take (div (length str) 2) str
 
 palindrome :: String -> Bool
 palindrome str = reverse str == str
@@ -102,10 +105,7 @@ palindrome str = reverse str == str
 --   capitalize "goodbye cruel world" ==> "Goodbye Cruel World"
 
 capitalize :: String -> String
-capitalize str = unwords (map capitalizeWord (words str))
-
-capitalizeWord :: String -> String
-capitalizeWord w = toUpper (head w) : tail w
+capitalize = todo
 
 ------------------------------------------------------------------------------
 -- Ex 6: powers k max should return all the powers of k that are less
@@ -122,7 +122,7 @@ capitalizeWord w = toUpper (head w) : tail w
 --   * the function takeWhile
 
 powers :: Int -> Int -> [Int]
-powers k max = takeWhile (\x -> x <= max) (map (\y -> k^y) [0..max])
+powers k max = todo
 
 ------------------------------------------------------------------------------
 -- Ex 7: implement a functional while loop. While should be a function
@@ -145,9 +145,7 @@ powers k max = takeWhile (\x -> x <= max) (map (\y -> k^y) [0..max])
 --     ==> Avvt
 
 while :: (a->Bool) -> (a->a) -> a -> a
-while check update value 
-  | check value = while check update $ update value
-  | otherwise = value
+while check update value = todo
 
 ------------------------------------------------------------------------------
 -- Ex 8: another version of a while loop. This time, the check
@@ -159,24 +157,25 @@ while check update value
 -- a Right, the function should call `check` on the contents of the
 -- Right and so on.
 --
--- Hint! You'll need a helper function to pattern match on the result of f.
---
--- Examples (see definition of step below):
+-- Examples (see definitions of step and bomb below):
 --   whileRight (step 100) 1   ==> 128
 --   whileRight (step 1000) 3  ==> 1536
+--   whileRight bomb 7         ==> "BOOM"
+--
+-- Hint! Remember the case-of expression from lecture 2.
 
 whileRight :: (a -> Either b a) -> a -> b
-whileRight f x = whileRightHelp f $ f x
-
-
-whileRightHelp :: (a -> Either b a) -> Either b a -> b
-whileRightHelp f (Left x) = x
-whileRightHelp f (Right x) = whileRightHelp f $ f x
+whileRight check x = todo
 
 -- for the whileRight examples:
 -- step k x doubles x if it's less than k
 step :: Int -> Int -> Either Int Int
 step k x = if x<k then Right (2*x) else Left x
+
+-- bomb x implements a countdown: it returns x-1 or "BOOM" if x was 0
+bomb :: Int -> Either String Int
+bomb 0 = Left "BOOM"
+bomb x = Right (x-1)
 
 ------------------------------------------------------------------------------
 -- Ex 9: given a list of strings and a length, return all strings that
@@ -190,7 +189,7 @@ step k x = if x<k then Right (2*x) else Left x
 -- Hint! This is a great use for list comprehensions
 
 joinToLength :: Int -> [String] -> [String]
-joinToLength x xs = filter  (\str -> length str == x) [ first ++ last | first <- xs, last <- xs]
+joinToLength = todo
 
 ------------------------------------------------------------------------------
 -- Ex 10: implement the operator +|+ that returns a list with the first
@@ -204,13 +203,6 @@ joinToLength x xs = filter  (\str -> length str == x) [ first ++ last | first <-
 --   [] +|+ [True]        ==> [True]
 --   [] +|+ []            ==> []
 
-(+|+) :: [a] -> [a] -> [a]
-xs1 +|+ xs2 = combine xs1 ++ combine xs2 
-
-combine :: [a] -> [a]
-combine xs = if length xs > 0
-          then [head xs]
-        else xs
 
 ------------------------------------------------------------------------------
 -- Ex 11: remember the lectureParticipants example from Lecture 2? We
@@ -227,7 +219,7 @@ combine xs = if length xs > 0
 --   sumRights [Left "bad!", Left "missing"]         ==>  0
 
 sumRights :: [Either a Int] -> Int
-sumRights xs = foldl (+) 0 $ map (\x -> (either (\x -> 0) (\x -> x) x)) xs
+sumRights = todo
 
 ------------------------------------------------------------------------------
 -- Ex 12: recall the binary function composition operation
@@ -243,7 +235,7 @@ sumRights xs = foldl (+) 0 $ map (\x -> (either (\x -> 0) (\x -> x) x)) xs
 --   multiCompose [(3*), (2^), (+1)] 0 ==> 6
 --   multiCompose [(+1), (2^), (3*)] 0 ==> 2
 
-multiCompose fs = foldr (\f g -> f . g) id fs
+multiCompose fs = todo
 
 ------------------------------------------------------------------------------
 -- Ex 13: let's consider another way to compose multiple functions. Given
@@ -261,8 +253,10 @@ multiCompose fs = foldr (\f g -> f . g) id fs
 --   multiApp sum [(1+), (^3), (+2)] 1  ==>  6
 --   multiApp reverse [tail, take 2, reverse] "foo" ==> ["oof","fo","oo"]
 --   multiApp concat [take 3, reverse] "race" ==> "racecar"
+--   multiApp id [head, (!!2), last] "axbxc" ==> ['a','b','c'] i.e. "abc"
+--   multiApp sum [head, (!!2), last] [1,9,2,9,3] ==> 6
 
-multiApp f xs x = f $ map (\g -> g x) xs
+multiApp = todo
 
 ------------------------------------------------------------------------------
 -- Ex 14: in this exercise you get to implement an interpreter for a
@@ -297,15 +291,4 @@ multiApp f xs x = f $ map (\g -> g x) xs
 -- function, the surprise won't work.
 
 interpreter :: [String] -> [String]
-interpreter commands = interpreterHelper [] commands 0 0 
-
-interpreterHelper :: [String] -> [String] -> Int -> Int -> [String]
-interpreterHelper res [] x y = res 
-interpreterHelper res commands x y
-  | head commands == "up" = interpreterHelper res (tail commands) x (y + 1)
-  | head commands == "right" = interpreterHelper res (tail commands) (x + 1) y
-  | head commands == "left" = interpreterHelper res (tail commands) (x - 1) y
-  | head commands == "down" = interpreterHelper res (tail commands) x (y - 1)
-  | head commands == "printX" = interpreterHelper ( res ++[(show x)]) (tail commands) x y
-  | head commands == "printY" = interpreterHelper ( res ++[(show y)]) (tail commands) x y
-  | otherwise = interpreterHelper res (tail commands) x y
+interpreter commands = todo

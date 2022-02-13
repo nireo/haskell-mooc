@@ -20,7 +20,6 @@ import Mooc.Todo
 ------------------------------------------------------------------------------
 -- Ex 1: define variables one and two. They should have type Int and
 -- values 1 and 2, respectively.
-
 one :: Int
 one = 1
 
@@ -33,7 +32,7 @@ two = 2
 -- should take one argument and return it multiplied by two.
 
 double :: Integer -> Integer
-double x = x * 2 
+double x = 2 * x
 
 ------------------------------------------------------------------------------
 -- Ex 3: define the function quadruple that uses the function double
@@ -41,7 +40,7 @@ double x = x * 2
 -- four.
 
 quadruple :: Integer -> Integer
-quadruple x = x * 4
+quadruple x = 4 * x
 
 ------------------------------------------------------------------------------
 -- Ex 4: define the function distance. It should take four arguments of
@@ -57,10 +56,10 @@ quadruple x = x * 4
 --   distance 0 0 1 1  ==>  1.4142135...
 --   distance 1 1 4 5  ==>  5.0
 
-distance x1 y1 x2 y2 =  sqrt (xx*xx + yy*yy) 
-    where
-        xx = x1 - x2
-        yy = y1 - y2
+distance x1 y1 x2 y2 = sqrt (x'*x' + y'*y')
+  where
+    x' = x1 - x2
+    y' = y1 - y2
 
 ------------------------------------------------------------------------------
 -- Ex 5: define the function eeny that returns "eeny" for even inputs
@@ -69,7 +68,7 @@ distance x1 y1 x2 y2 =  sqrt (xx*xx + yy*yy)
 -- Ps. have a look at the built in function "even"
 
 eeny :: Integer -> String
-eeny x = if even x then "eeny" else "meeny" 
+eeny x = if even x then "eeny" else "meeny"
 
 ------------------------------------------------------------------------------
 -- Ex 6: here's the function checkPassword from the course material.
@@ -91,15 +90,10 @@ checkPassword password = if password == "swordfish" || password == "mellon"
 -- in grams, and returns the cost in credits.
 
 postagePrice :: Int -> Int
-postagePrice weight = if weight <= 500
-                         then 250
-                         else if weight > 500 && weight <= 5000
-                            then 300 + weight
-                            else if weight > 5000
-                                then 6000
-                                else 6000
-
-
+postagePrice x
+  | x <= 500 = 250
+  | x <= 5000 = 300 + x
+  | otherwise = 6000
 
 ------------------------------------------------------------------------------
 -- Ex 8: define a function isZero that returns True if it is given an
@@ -110,9 +104,9 @@ postagePrice weight = if weight <= 500
 -- Ps. remember, the type of booleans in haskell is Bool
 
 isZero :: Integer -> Bool
-isZero num = if num == 0
-                then True
-                else False
+isZero n
+  | n == 0 = True
+  | otherwise = False
 
 ------------------------------------------------------------------------------
 -- Ex 9: implement using recursion a function sumTo such that
@@ -121,15 +115,18 @@ isZero num = if num == 0
 
 sumTo :: Integer -> Integer
 sumTo 1 = 1
-sumTo n = n + sumTo(n-1)
+sumTo n = n + sumTo(n - 1)
 
 ------------------------------------------------------------------------------
 -- Ex 10: power n k should compute n to the power k (i.e. n^k)
 -- Use recursion.
 
 power :: Integer -> Integer -> Integer
-power n 0  = 1
-power n k = n * power n (k - 1)
+power n k = powerHelper n n k
+
+powerHelper :: Integer -> Integer -> Integer -> Integer
+powerHelper orig n 1 = n
+powerHelper orig n k = powerHelper orig (n*orig) (k-1)
 
 ------------------------------------------------------------------------------
 -- Ex 11: ilog3 n should be the number of times you can divide given
@@ -148,5 +145,6 @@ power n k = n * power n (k - 1)
 --   ilog3 7 ==> 2
 
 ilog3 :: Integer -> Integer
-ilog3 0 = 0
-ilog3 x = 1 + ilog3 (x `div` 3)
+ilog3 n
+  | n == 0 = 0
+  | otherwise = 1 + ilog3 (n `div` 3)

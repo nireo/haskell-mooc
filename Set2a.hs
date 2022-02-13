@@ -21,6 +21,7 @@ import Data.List
 -- Ex 1: Define the constant years, that is a list of the values 1982,
 -- 2004 and 2020 in this order.
 
+years :: [Integer]
 years = [1982, 2004, 2020]
 
 ------------------------------------------------------------------------------
@@ -32,7 +33,8 @@ years = [1982, 2004, 2020]
 -- Hint! remember the take and drop functions.
 
 takeFinal :: Int -> [a] -> [a]
-takeFinal n xs = drop (length xs - n) xs
+takeFinal n xs = reverse (take n (reverse xs))
+
 
 ------------------------------------------------------------------------------
 -- Ex 3: Update an element at a certain index in a list. More
@@ -46,7 +48,7 @@ takeFinal n xs = drop (length xs - n) xs
 --   updateAt 2 0 [4,5,6,7] ==>  [4,5,0,7]
 
 updateAt :: Int -> a -> [a] -> [a]
-updateAt i x xs = take i xs ++ x : drop (i+1) xs
+updateAt i x xs = init (take (i + 1) xs) ++ [x] ++ drop (i + 1) xs
 
 ------------------------------------------------------------------------------
 -- Ex 4: substring i j s should return the substring of s starting at
@@ -60,7 +62,7 @@ updateAt i x xs = take i xs ++ x : drop (i+1) xs
 --   substring 0 4 "abcdefgh"  ==>  "abcd"
 
 substring :: Int -> Int -> String -> String
-substring i j s = drop i $ take j s
+substring i j s = take (j-i) (drop i s)
 
 ------------------------------------------------------------------------------
 -- Ex 5: check if a string is a palindrome. A palindrome is a string
@@ -75,9 +77,7 @@ substring i j s = drop i $ take j s
 --   isPalindrome "AB"       ==>  False
 
 isPalindrome :: String -> Bool
-isPalindrome str = if reverse str == str
-                      then True
-                      else False
+isPalindrome str = reverse str == str
 
 ------------------------------------------------------------------------------
 -- Ex 6: implement the function palindromify that chops a character
@@ -91,12 +91,9 @@ isPalindrome str = if reverse str == str
 --   palindromify "abracacabra" ==> "acaca"
 
 palindromify :: String -> String
-palindromify s = if length s > 0 
-                    then if isPalindrome s
-                        then s
-                        else 
-                            palindromify (substring 1 (length s - 1) s)
-                    else ""
+palindromify s
+  | isPalindrome s = s
+  | otherwise = palindromify (tail (init s))
 
 ------------------------------------------------------------------------------
 -- Ex 7: implement safe integer division, that is, a function that
@@ -109,7 +106,8 @@ palindromify s = if length s > 0
 --   safeDiv 4 0  ==> Nothing
 
 safeDiv :: Integer -> Integer -> Maybe Integer
-safeDiv x y = if y == 0 then Nothing else Just (x `div` y) 
+safeDiv x 0 = Nothing
+safeDiv x y = Just (div x y)
 
 ------------------------------------------------------------------------------
 -- Ex 8: implement a function greet that greets a person given a first
@@ -121,7 +119,7 @@ safeDiv x y = if y == 0 then Nothing else Just (x `div` y)
 --   greet "John" (Just "Smith")  ==> "Hello, John Smith!"
 
 greet :: String -> Maybe String -> String
-greet first Nothing = "Hello, " ++ first ++ "!" 
+greet first Nothing = "Hello, " ++ first ++ "!"
 greet first (Just last) = "Hello, " ++ first ++ " " ++ last ++ "!"
 
 ------------------------------------------------------------------------------
@@ -138,8 +136,9 @@ greet first (Just last) = "Hello, " ++ first ++ " " ++ last ++ "!"
 --   safeIndex ["a","b","c"] (-1)  ==> Nothing
 
 safeIndex :: [a] -> Int -> Maybe a
-safeIndex xs i  | i < length xs && i >= 0 = Just (xs !! i)
-                | otherwise = Nothing
+safeIndex xs i
+  | i >= length xs || i < 0 = Nothing
+  | otherwise = Just (xs !! i)
 
 ------------------------------------------------------------------------------
 -- Ex 10: another variant of safe division. This time you should use
@@ -150,9 +149,8 @@ safeIndex xs i  | i < length xs && i >= 0 = Just (xs !! i)
 --   eitherDiv 4 0   ==> Left "4/0"
 
 eitherDiv :: Integer -> Integer -> Either String Integer
-eitherDiv x y = if y == 0
-                   then Left (show x++"/0")
-                   else Right (x `div` y)
+eitherDiv x 0 = Left (show x ++ "/0")
+eitherDiv x y = Right (div x y)
 
 ------------------------------------------------------------------------------
 -- Ex 11: implement the function addEithers, which combines two values of type
@@ -163,15 +161,12 @@ eitherDiv x y = if y == 0
 --
 -- Hint! Remember pattern matching
 --
--- Exmaples:
---
--- addEithers (Right 1) (Right 2) ==> Right 3
--- addEithers (Right 1) (Left "fail") ==> Left "fail"
--- addEithers (Left "boom") (Left "fail") ==> Left "boom"
+-- Examples:
+--   addEithers (Right 1) (Right 2) ==> Right 3
+--   addEithers (Right 1) (Left "fail") ==> Left "fail"
+--   addEithers (Left "boom") (Left "fail") ==> Left "boom"
 
 addEithers :: Either String Int -> Either String Int -> Either String Int
 addEithers (Right a) (Right b) = Right (a + b)
-addEithers (Right a) (Left b) = Left (b) 
-addEithers (Left a) (Right b) = Left (a)
-addEithers (Left a) (Left b) = Left (a)
-
+addEithers (Left a) _ = Left a
+addEithers _ (Left b) = Left b
